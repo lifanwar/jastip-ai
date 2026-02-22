@@ -43,6 +43,7 @@ or simply in nixos:
 ```bash
 nix-shell
 ```
+> **Note:** `nix-shell` automatically creates a Python virtual environment in the `venv` folder and activates it.
 
 Then:
 ```bash
