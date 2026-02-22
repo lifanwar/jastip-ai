@@ -48,6 +48,9 @@ pkgs.mkShell {
     alias tw-install="python manage.py tailwind install"
     alias tw-watch="python manage.py tailwind start"
 
+    # Runserver alias
+    alias run="python manage.py runserver 0.0.0.0:8000"
+
     echo
     echo "==> Django development environment ready."
     echo "   - Virtualenv: venv/"
@@ -55,6 +58,7 @@ pkgs.mkShell {
     echo "       startapp <appname>    # python manage.py startapp <appname> apps/<appname>"
     echo "       tw-install            # python manage.py tailwind install"
     echo "       tw-watch              # python manage.py tailwind start"
+    echo "       run                   # python manage.py runserver 0.0.0.0:8000"
     echo
   '';
 }
