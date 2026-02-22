@@ -12,6 +12,7 @@ Starter setup best practice Django:
 ```text
 .
 ├── manage.py
+├── shell.nix
 ├── apps/
 ├── theme/
 ├── static/
@@ -37,6 +38,20 @@ DJANGO_ENV=prod/dev/staging
 ```bash
 python manage.py startapp yournewapps apps/yournewapps
 ```
+
+or simply in nixos:
+```bash
+nix-shell
+```
+
+Then:
+```bash
+startapp <appname>    # python manage.py startapp <appname> apps/<appname>
+tw-install            # python manage.py tailwind install
+tw-watch              # python manage.py tailwind start
+run                   # python manage.py runserver 0.0.0.0:8000
+```
+
 
 sign up yournewapps in: `LOCAL_APPS` ( `config/settings/base.py`):
 
