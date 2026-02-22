@@ -1,94 +1,60 @@
 { pkgs ? import <nixpkgs> {} }:
 
+let
+  python = pkgs.python311;
+in
 pkgs.mkShell {
-  packages = with pkgs; [
-    python3
-    python3Packages.pip
-    python3Packages.virtualenv
-    nodejs_20
-    tmux
-    git
+  name = "django-dev-shell";
+
+  buildInputs = [
+    python
+    pkgs.python311Packages.pip
+    pkgs.nodejs_20
+    pkgs.git
   ];
 
-  VIRTUAL_ENV_DISABLE_PROMPT = "1";
-  PIP_DISABLE_PIP_VERSION_CHECK = "1";
-
   shellHook = ''
-    set -e
-
-    echo "Entering Django dev shell..."
-
-    # Ensure we are in project root
-    if [ ! -f manage.py ]; then
-      echo "Warning: manage.py not found. Run nix-shell in Django project root."
+    echo "==> Activating virtualenv in venv/ (if it exists)..."
+    if [ -d "venv" ]; then
+      source venv/bin/activate
+      echo "==> Virtualenv venv/ activated."
+    else
+      echo "==> venv/ does not exist, creating it..."
+      ${python}/bin/python -m venv venv
+      source venv/bin/activate
+      echo "==> Virtualenv venv/ created and activated."
     fi
 
-    # Create virtualenv if missing
-    if [ ! -d "venv" ]; then
-      echo "Creating virtualenv..."
-      python -m venv venv
-    fi
-
-    # Activate venv
-    source venv/bin/activate
-
-    # Install requirements automatically
-    if [ -f requirements.txt ]; then
-      echo "Installing requirements..."
-      python -m pip install --upgrade pip wheel setuptools >/dev/null
+    echo "==> Installing requirements.txt (if it exists)..."
+    if [ -f "requirements.txt" ]; then
       pip install -r requirements.txt
+    else
+      echo "==> requirements.txt not found, skipping install."
     fi
 
-    # -------- Commands --------
-
-    # startapp <name>
+    # Function to create an app in apps/<appname>
     startapp () {
       if [ -z "$1" ]; then
-        echo "Usage: startapp appname"
-        return 2
+        echo "Usage: startapp <appname>"
+        return 1
       fi
-      mkdir -p apps
-      python manage.py startapp "$1" "apps/$1"
-      echo "App '$1' created in apps/$1"
+      local APP_NAME="$1"
+      echo "==> Creating Django app: apps/''${APP_NAME}"
+      mkdir -p "apps"
+      python manage.py startapp "''${APP_NAME}" "apps/''${APP_NAME}"
     }
 
-    # frontend install / watch
-    frontend () {
-      case "$1" in
-        install)
-          python manage.py tailwind install
-          ;;
-        watch)
-          python manage.py tailwind start
-          ;;
-        *)
-          echo "Usage:"
-          echo "  frontend install   -> install Tailwind frontend"
-          echo "  frontend watch     -> run Tailwind watcher"
-          ;;
-      esac
-    }
+    # Tailwind aliases
+    alias tw-install="python manage.py tailwind install"
+    alias tw-watch="python manage.py tailwind start"
 
-    export -f startapp frontend
-
-    # -------- TMUX AUTO SPLIT --------
-    if [ -n "$PS1" ] && command -v tmux >/dev/null 2>&1 && [ -z "$TMUX" ]; then
-      SESSION="django"
-      if tmux has-session -t "$SESSION" 2>/dev/null; then
-        tmux attach -t "$SESSION"
-      else
-        tmux new-session -d -s "$SESSION"
-        tmux split-window -v -t "$SESSION"
-        tmux select-pane -t "$SESSION:0.0"
-        tmux attach -t "$SESSION"
-      fi
-    fi
-
-    echo ""
-    echo "Available commands:"
-    echo "  startapp myapp"
-    echo "  frontend install"
-    echo "  frontend watch"
-    echo ""
+    echo
+    echo "==> Django development environment ready."
+    echo "   - Virtualenv: venv/"
+    echo "   - Useful commands:"
+    echo "       startapp <appname>    # python manage.py startapp <appname> apps/<appname>"
+    echo "       tw-install            # python manage.py tailwind install"
+    echo "       tw-watch              # python manage.py tailwind start"
+    echo
   '';
 }
