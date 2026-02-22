@@ -1,13 +1,13 @@
 # Django Starter (apps/ + Tailwind)
 
-Starter setup Django dengan:
+Starter setup best practice Django:
 
-- `apps/` untuk semua Django apps
-- `config/settings/` terpisah: `base`, `dev`, `staging`, `prod`
-- pindah environment cukup ubah `DJANGO_ENV=dev|staging|prod`
-- integrasi `django-tailwind`
+- `apps/` all apps django start here
+- `config/settings/` switch: `base`, `dev`, `staging`, `prod`
+- move env just edit in .env `DJANGO_ENV=dev|staging|prod`
+- frontend integration with `django-tailwind`, `alpinejs` 
 
-## Struktur
+## Tree base project
 
 ```text
 .
@@ -32,19 +32,32 @@ Starter setup Django dengan:
 DJANGO_ENV=prod/dev/staging
 ```
 
-## Buat App Baru (di `apps/`)
+## Make New App (in `apps/`)
 
 ```bash
 python manage.py startapp yournewapps apps/yournewapps
 ```
 
-Daftarkan ke `LOCAL_APPS` (di `config/settings/base.py`):
+sign up yournewapps in: `LOCAL_APPS` ( `config/settings/base.py`):
 
 ```py
 LOCAL_APPS = [
     "apps.yournewapps"
 ]
 ```
+
+Update file apps in: `apps.yournewapps.app.py`
+
+```py
+name = 'yournewapps'
+```
+
+To:
+
+```py
+name = 'apps.yournewapps'
+```
+
 
 ## Instalation Django + tailwindcss built in
 
