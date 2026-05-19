@@ -4,3 +4,4 @@ gunicorn
 django-tailwind
 whitenoise
 python-dotenv
+django-ninja

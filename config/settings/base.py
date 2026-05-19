@@ -22,10 +22,11 @@ DJANGO_APPS = [
 THIRD_PARTY_APPS = [
     "tailwind",
     "theme",
+    "ninja"
 ]
 
 LOCAL_APPS = [
-    # "apps.core"
+    "apps.jastip"
 ]
 
 # Initiasi apps
