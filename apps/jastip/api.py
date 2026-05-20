@@ -39,22 +39,22 @@ def search_trips(
     today = timezone.localdate()
 
     if start_date < today:
-        raise HttpError(
-            400,
-            "Tanggal pencarian tidak boleh kurang dari hari ini."
-        )
+        return {
+            "success": False,
+            "message": "Tidak bisa mencari data dari tanggal sebelumnya."
+        }
 
     if end_date is not None and end_date < today:
-        raise HttpError(
-            400,
-            "Tanggal akhir tidak boleh kurang dari hari ini."
-        )
+        return {
+            "success": False,
+            "message": "Tanggal akhir tidak boleh kurang dari hari ini."
+        }
 
     if end_date is not None and start_date > end_date:
-        raise HttpError(
-            400,
-            "start_date tidak boleh lebih besar dari end_date."
-        )
+        return {
+            "success": False,
+            "message": "Tanggal awal tidak boleh lebih besar dari tanggal akhir."
+        }
 
     queryset = Trip.objects.select_related(
         "departure",
